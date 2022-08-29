@@ -1,4 +1,4 @@
-package main
+package tweetviz
 
 import (
 	"log"
@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-func server() {
+func runServer() {
 	app := fiber.New()
 
 	app.Use(cors.New())

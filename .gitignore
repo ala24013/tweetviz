@@ -19,3 +19,4 @@
 client/build
 client/node_modules
 server/dist
+server/c.out

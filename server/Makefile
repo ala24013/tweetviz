@@ -11,7 +11,7 @@ endif
 
 .PHONY: deps
 deps:
-	go get .
+	cd pkg && go get .
 
 build: deps
 	go build -o ./dist/server$(EXT)
@@ -32,3 +32,4 @@ vet:
 .PHONY: clean
 clean:
 	$(RM) dist
+	$(RM) c.out
