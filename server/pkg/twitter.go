@@ -11,7 +11,7 @@ import (
 	"golang.org/x/oauth2/clientcredentials"
 )
 
-func stream(query string) {
+func Stream(query string) {
 	flags := struct {
 		consumerKey    string
 		consumerSecret string

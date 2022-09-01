@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-func runServer() {
+func RunServer() {
 	app := fiber.New()
 
 	app.Use(cors.New())
