@@ -22,6 +22,17 @@ func Stream(query string, shutdown <-chan int) {
 		panic(err)
 	}
 
+	demux := twitter.NewSwitchDemux()
+	demux.Tweet = func(tweet *twitter.Tweet) {
+		fmt.Println(tweet.Text)
+	}
+	demux.DM = func(dm *twitter.DirectMessage) {
+		fmt.Println(dm.SenderID)
+	}
+	demux.Event = func(event *twitter.Event) {
+		fmt.Printf("%#v\n", event)
+	}
+
 	params := &twitter.StreamFilterParams{
 		Track:         []string{query},
 		StallWarnings: twitter.Bool(true),
@@ -31,12 +42,10 @@ func Stream(query string, shutdown <-chan int) {
 		panic(err)
 	}
 
-	go func() {
-		for m := range stream.Messages {
-			fmt.Println(m)
-		}
-	}()
+	go demux.HandleChan(stream.Messages)
+
 	<-shutdown
+	stream.Stop()
 }
 
 func getClient() (*twitter.Client, error) {

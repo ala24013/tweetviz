@@ -23,6 +23,10 @@ build: deps
 run: deps
 	go run ./...
 
+.PHONY: stream
+stream: deps
+	go run ./cmd/stream/main.go
+
 .PHONY: test
 test:
 	go test -cover ./...
