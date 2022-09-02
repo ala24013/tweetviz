@@ -18,7 +18,7 @@ build: deps
 
 .PHONY: test
 test:
-	go test ./...
+	go test -cover ./...
 
 .PHONY: cover
 cover:

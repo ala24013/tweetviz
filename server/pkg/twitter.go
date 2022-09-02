@@ -12,30 +12,11 @@ import (
 )
 
 func Stream(query string) {
-	flags := struct {
-		consumerKey    string
-		consumerSecret string
-	}{}
-
-	flag.StringVar(&flags.consumerKey, "consumer-key", "", "Twitter Consumer Key")
-	flag.StringVar(&flags.consumerSecret, "consumer-secret", "", "Twitter Consumer Secret")
-	flag.Parse()
-	flagutil.SetFlagsFromEnv(flag.CommandLine, "TWITTER")
-
-	if flags.consumerKey == "" || flags.consumerSecret == "" {
-		log.Fatal("Application Access Token required")
+	client, err := getClient()
+	if err != nil {
+		panic(err)
 	}
 
-	// oauth2 configures a client that uses app credentials to keep a fresh token
-	config := &clientcredentials.Config{
-		ClientID:     flags.consumerKey,
-		ClientSecret: flags.consumerSecret,
-		TokenURL:     "https://api.twitter.com/oauth2/token",
-	}
-	// http.Client will automatically authorize Requests
-	httpClient := config.Client(oauth2.NoContext)
-
-	client := twitter.NewClient(httpClient)
 	params := &twitter.StreamFilterParams{
 		Track:         []string{"kitten"},
 		StallWarnings: twitter.Bool(true),
@@ -48,4 +29,33 @@ func Stream(query string) {
 	for m := range stream.Messages {
 		fmt.Println(m)
 	}
+}
+
+func getClient() (*twitter.Client, error) {
+	flags := struct {
+		twitterKey    string
+		twitterSecret string
+	}{}
+
+	flag.StringVar(&flags.twitterKey, "KEY", "", "Twitter Key")
+	flag.StringVar(&flags.twitterSecret, "SECRET", "", "Twitter Secret")
+	flag.Parse()
+	flagutil.SetFlagsFromEnv(flag.CommandLine, "TWITTER")
+
+	if flags.twitterKey == "" || flags.twitterSecret == "" {
+		log.Fatal("Application Access Token required")
+	}
+
+	// oauth2 configures a client that uses app credentials to keep a fresh token
+	config := &clientcredentials.Config{
+		ClientID:     flags.twitterKey,
+		ClientSecret: flags.twitterSecret,
+		TokenURL:     "https://api.twitter.com/oauth2/token",
+	}
+	// http.Client will automatically authorize Requests
+	httpClient := config.Client(oauth2.NoContext)
+
+	client := twitter.NewClient(httpClient)
+
+	return client, nil
 }
