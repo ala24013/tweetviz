@@ -3,10 +3,12 @@ ifeq ($(OS), Windows_NT)
   MV ?= move
   RM ?= del -Recurse -Force
   EXT ?= .exe
+  SETENV ?= "../win.bat;"
 else
   MV ?= mv -f
   RM ?= rm -rf
   EXT ?= ""
+  SETENV ?= ". ../lin.env;"
 endif
 
 .PHONY: deps
@@ -18,7 +20,7 @@ build: deps
 
 .PHONY: test
 test:
-	go test -cover ./...
+	$(SETENV) go test -cover ./...
 
 .PHONY: cover
 cover:
