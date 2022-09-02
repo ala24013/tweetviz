@@ -24,3 +24,4 @@ server/c.out
 # Environment variables (including keys)
 win.bat
 lin.env
+.env

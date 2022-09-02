@@ -21,4 +21,5 @@ func main() {
 		tweetviz.Stream("test")
 	}()
 	<-sigs
+	fmt.Println("Shutting down...")
 }

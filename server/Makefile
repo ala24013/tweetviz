@@ -1,14 +1,15 @@
-# Windows Patch
+# Fix environment
+include .$(PWD)/.env
+
+# Cross platform support
 ifeq ($(OS), Windows_NT)
   MV ?= move
   RM ?= del -Recurse -Force
   EXT ?= .exe
-  SETENV ?= "../win.bat;"
 else
   MV ?= mv -f
   RM ?= rm -rf
   EXT ?= ""
-  SETENV ?= ". ../lin.env;"
 endif
 
 .PHONY: deps
@@ -18,9 +19,13 @@ deps:
 build: deps
 	go build -o ./dist/server$(EXT)
 
+.PHONY: run
+run: deps
+	go run ./...
+
 .PHONY: test
 test:
-	$(SETENV) go test -cover ./...
+	go test -cover ./...
 
 .PHONY: cover
 cover:

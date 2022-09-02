@@ -18,7 +18,7 @@ func Stream(query string) {
 	}
 
 	params := &twitter.StreamFilterParams{
-		Track:         []string{"kitten"},
+		Track:         []string{query},
 		StallWarnings: twitter.Bool(true),
 	}
 	stream, err := client.Streams.Filter(params)

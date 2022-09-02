@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-func RunServer() {
+func SetupServer() *fiber.App {
 	app := fiber.New()
 
 	app.Use(cors.New())
@@ -19,5 +19,10 @@ func RunServer() {
 		return c.SendString("Hello, World!")
 	})
 
-	log.Fatal(app.Listen(":3000"))
+	return app
+}
+
+func RunServer() {
+	server := SetupServer()
+	log.Fatal(server.Listen(":3000"))
 }
