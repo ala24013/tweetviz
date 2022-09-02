@@ -11,6 +11,7 @@ import (
 
 func main() {
 	sigs := make(chan os.Signal, 1)
+	shutdown := make(chan int)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		fmt.Println("Starting webserver...")
@@ -18,7 +19,7 @@ func main() {
 	}()
 	go func() {
 		fmt.Println("Starting twitter stream...")
-		tweetviz.Stream("test")
+		tweetviz.Stream("test", shutdown)
 	}()
 	<-sigs
 	fmt.Println("Shutting down...")
