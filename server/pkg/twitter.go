@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	TWITTER_KEY    string
-	TWITTER_SECRET string
+	TWITTER_CONSUMER_KEY    string
+	TWITTER_CONSUMER_SECRET string
 )
 
 func Stream(query string, shutdown <-chan int) {
@@ -49,23 +49,23 @@ func Stream(query string, shutdown <-chan int) {
 }
 
 func getClient() (*twitter.Client, error) {
-	if TWITTER_KEY == "" {
-		flag.StringVar(&TWITTER_KEY, "KEY", "", "Twitter Key")
+	if TWITTER_CONSUMER_KEY == "" {
+		flag.StringVar(&TWITTER_CONSUMER_KEY, "consumer-key", "", "Twitter Key")
 	}
-	if TWITTER_SECRET == "" {
-		flag.StringVar(&TWITTER_SECRET, "SECRET", "", "Twitter Secret")
+	if TWITTER_CONSUMER_SECRET == "" {
+		flag.StringVar(&TWITTER_CONSUMER_SECRET, "consumer-sercret", "", "Twitter Secret")
 	}
 	flag.Parse()
 	flagutil.SetFlagsFromEnv(flag.CommandLine, "TWITTER")
 
-	if TWITTER_KEY == "" || TWITTER_SECRET == "" {
+	if TWITTER_CONSUMER_KEY == "" || TWITTER_CONSUMER_SECRET == "" {
 		log.Fatal("Application Access Token required")
 	}
 
 	// oauth2 configures a client that uses app credentials to keep a fresh token
 	config := &clientcredentials.Config{
-		ClientID:     TWITTER_KEY,
-		ClientSecret: TWITTER_SECRET,
+		ClientID:     TWITTER_CONSUMER_KEY,
+		ClientSecret: TWITTER_CONSUMER_SECRET,
 		TokenURL:     "https://api.twitter.com/oauth2/token",
 	}
 	// http.Client will automatically authorize Requests

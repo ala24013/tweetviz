@@ -1,5 +1,5 @@
 # Fix environment
-include .$(PWD)/.env
+include ./.env
 
 # Cross platform support
 ifeq ($(OS), Windows_NT)
@@ -10,6 +10,7 @@ else
   MV ?= mv -f
   RM ?= rm -rf
   EXT ?= ""
+  ENV ?= TWITTER_CONSUMER_KEY=$(TWITTER_CONSUMER_KEY) TWITTER_CONSUMER_SECRET=$(TWITTER_CONSUMER_SECRET) TWITTER_ACCESS_KEY=$(TWITTER_ACCESS_KEY) TWITTER_ACCESS_SECRET=$(TWITTER_ACCESS_SECRET) 
 endif
 
 .PHONY: deps
@@ -25,7 +26,7 @@ run: deps
 
 .PHONY: stream
 stream: deps
-	go run ./cmd/stream/main.go
+	go run ./cmd/streaming/streaming.go
 
 .PHONY: test
 test:
