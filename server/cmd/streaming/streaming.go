@@ -20,17 +20,9 @@ func (a authorize) Add(req *http.Request) {
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", a.Token))
 }
 
-/*
-*
-
-	In order to run, the user will need to provide the bearer token.
-
-*
-*/
 func main() {
 	token := flag.String("token", os.Getenv("TWITTER_BEARER_TOKEN"), "twitter API token")
 	flag.Parse()
-	fmt.Println(*token)
 
 	tweet := &twitter.Tweet{
 		Authorizer: authorize{

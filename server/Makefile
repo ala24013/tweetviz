@@ -26,7 +26,7 @@ run: deps
 
 .PHONY: stream
 stream: deps
-	go run ./cmd/streaming/streaming.go
+	$(ENV) go run ./cmd/streaming/streaming.go
 
 .PHONY: test
 test:
