@@ -1,91 +1,76 @@
 package main
 
 import (
+	"context"
+	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
-	"log"
+	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
 
-	"github.com/coreos/pkg/flagutil"
-	"github.com/dghubble/go-twitter/twitter"
-	"github.com/dghubble/oauth1"
+	"github.com/g8rswimmer/go-twitter"
 )
 
+type authorize struct {
+	Token string
+}
+
+func (a authorize) Add(req *http.Request) {
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", a.Token))
+}
+
+/*
+*
+
+	In order to run, the user will need to provide the bearer token.
+
+*
+*/
 func main() {
-	flags := flag.NewFlagSet("user-auth", flag.ExitOnError)
-	consumerKey := flags.String("consumer-key", "", "Twitter Consumer Key")
-	consumerSecret := flags.String("consumer-secret", "", "Twitter Consumer Secret")
-	accessToken := flags.String("access-token", "", "Twitter Access Token")
-	accessSecret := flags.String("access-secret", "", "Twitter Access Secret")
-	flags.Parse(os.Args[1:])
-	flagutil.SetFlagsFromEnv(flags, "TWITTER")
+	token := flag.String("token", os.Getenv("TWITTER_BEARER_TOKEN"), "twitter API token")
+	flag.Parse()
+	fmt.Println(*token)
 
-	if *consumerKey == "" || *consumerSecret == "" || *accessToken == "" || *accessSecret == "" {
-		log.Fatal("Consumer key/secret and Access token/secret required")
+	tweet := &twitter.Tweet{
+		Authorizer: authorize{
+			Token: *token,
+		},
+		Client: http.DefaultClient,
+		Host:   "https://api.twitter.com",
+	}
+	fieldOpts := twitter.TweetFieldOptions{
+		Expansions:  []twitter.Expansion{twitter.ExpansionEntitiesMentionsUserName, twitter.ExpansionAuthorID},
+		TweetFields: []twitter.TweetField{twitter.TweetFieldCreatedAt, twitter.TweetFieldConversationID, twitter.TweetFieldAttachments},
 	}
 
-	config := oauth1.NewConfig(*consumerKey, *consumerSecret)
-	token := oauth1.NewToken(*accessToken, *accessSecret)
-	// OAuth1 http.Client will automatically authorize Requests
-	httpClient := config.Client(oauth1.NoContext, token)
-
-	// Twitter Client
-	client := twitter.NewClient(httpClient)
-
-	// Convenience Demux demultiplexed stream messages
-	demux := twitter.NewSwitchDemux()
-	demux.Tweet = func(tweet *twitter.Tweet) {
-		fmt.Println(tweet.Text)
+	lookups, err := tweet.FilteredStream(context.Background(), fieldOpts)
+	var tweetErr *twitter.TweetErrorResponse
+	switch {
+	case errors.As(err, &tweetErr):
+		printTweetError(tweetErr)
+	case err != nil:
+		fmt.Println(err)
+	default:
+		for _, lookup := range lookups {
+			printTweetLookup(lookup)
+			fmt.Println()
+		}
 	}
-	demux.DM = func(dm *twitter.DirectMessage) {
-		fmt.Println(dm.SenderID)
-	}
-	demux.Event = func(event *twitter.Event) {
-		fmt.Printf("%#v\n", event)
-	}
+}
 
-	fmt.Println("Starting Stream...")
-
-	// FILTER
-	filterParams := &twitter.StreamFilterParams{
-		Track:         []string{"cat"},
-		StallWarnings: twitter.Bool(true),
-	}
-	stream, err := client.Streams.Filter(filterParams)
+func printTweetLookup(lookup twitter.TweetLookup) {
+	enc, err := json.MarshalIndent(lookup, "", "    ")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
+	fmt.Println(string(enc))
+}
 
-	// USER (quick test: auth'd user likes a tweet -> event)
-	// userParams := &twitter.StreamUserParams{
-	// 	StallWarnings: twitter.Bool(true),
-	// 	With:          "followings",
-	// 	Language:      []string{"en"},
-	// }
-	// stream, err := client.Streams.User(userParams)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// SAMPLE
-	// sampleParams := &twitter.StreamSampleParams{
-	// 	StallWarnings: twitter.Bool(true),
-	// }
-	// stream, err := client.Streams.Sample(sampleParams)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// Receive messages until stopped or stream quits
-	go demux.HandleChan(stream.Messages)
-
-	// Wait for SIGINT and SIGTERM (HIT CTRL-C)
-	ch := make(chan os.Signal)
-	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
-	log.Println(<-ch)
-
-	fmt.Println("Stopping Stream...")
-	stream.Stop()
+func printTweetError(tweetErr *twitter.TweetErrorResponse) {
+	enc, err := json.MarshalIndent(tweetErr, "", "    ")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(enc))
 }
