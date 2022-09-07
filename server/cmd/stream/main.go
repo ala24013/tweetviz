@@ -15,7 +15,7 @@ func main() {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		fmt.Println("Starting twitter stream...")
-		tweetviz.Stream("Trump", shutdown)
+		tweetviz.Stream("Cats", shutdown)
 	}()
 	<-sigs
 	fmt.Println("Stopping stream...")

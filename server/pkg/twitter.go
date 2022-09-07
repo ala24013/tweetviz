@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
+	"github.com/coreos/pkg/flagutil"
 	twitter "github.com/g8rswimmer/go-twitter/v2"
 )
 
@@ -97,12 +97,17 @@ func (a authorize) Add(req *http.Request) {
 }
 
 func getClient() (*twitter.Client, error) {
-	token := flag.String("token", os.Getenv("TWITTER_BEARER_TOKEN"), "twitter API token")
+	//token := flag.String("token", os.Getenv("TWITTER_BEARER_TOKEN"), "twitter API token")
+	if TWITTER_BEARER_TOKEN == "" {
+		flag.StringVar(&TWITTER_BEARER_TOKEN, "bearer-token", "", "Twitter Bearer Token")
+	}
 	flag.Parse()
+	flagutil.SetFlagsFromEnv(flag.CommandLine, "TWITTER")
 
+	fmt.Println(TWITTER_BEARER_TOKEN)
 	client := &twitter.Client{
 		Authorizer: authorize{
-			Token: *token,
+			Token: TWITTER_BEARER_TOKEN,
 		},
 		Client: http.DefaultClient,
 		Host:   "https://api.twitter.com",
