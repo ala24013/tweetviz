@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
-	"time"
 
 	"github.com/coreos/pkg/flagutil"
 	twitter "github.com/g8rswimmer/go-twitter/v2"
@@ -19,10 +17,63 @@ var (
 )
 
 func Stream(query string, shutdown <-chan int) {
+	deleteAllRules()
 	addRule(query)
-	getRules()
-	time.Sleep(1 * time.Second)
-	<-shutdown
+	streamTweets(shutdown)
+}
+
+func streamTweets(shutdown <-chan int) {
+	client, err := getClient()
+	if err != nil {
+		panic(err)
+	}
+
+	s, err := client.TweetSearchStream(context.Background(), twitter.TweetSearchStreamOpts{})
+	if err != nil {
+		log.Panicf("tweet sample callout error: %v", err)
+	}
+
+	func() {
+		defer s.Close()
+		for {
+			select {
+			case <-shutdown:
+				fmt.Println("closing")
+				return
+			case tm := <-s.Tweets():
+				tweets := tm.Raw.Tweets
+				users := tm.Raw.Includes.Users
+				for _, user := range users {
+					fmt.Printf("USER: %s", user.Name)
+				}
+				for _, tweet := range tweets {
+					fmt.Printf("Tweet: %s\n", string(tweet.Text))
+					fmt.Printf("AuthorID: %s\n", string(tweet.AuthorID))
+					c := tweet.Geo
+					if tweet.Geo != nil {
+						fmt.Printf("GOT SOME GEO: ")
+						fmt.Println(c)
+						//lat := c[0]
+						//long := c[1]
+						//fmt.Printf("Geo: Lat %f Long %f\n", lat, long)
+					}
+				}
+			case sm := <-s.SystemMessages():
+				smb, err := json.Marshal(sm)
+				if err != nil {
+					fmt.Printf("error decoding system message %v", err)
+				}
+				fmt.Printf("system: %s\n\n", string(smb))
+			case strErr := <-s.Err():
+				fmt.Printf("error: %v\n\n", strErr)
+			default:
+			}
+			if s.Connection() == false {
+				fmt.Println("connection lost")
+				return
+			}
+		}
+	}()
 }
 
 func addRule(query string) {
@@ -48,7 +99,7 @@ func addRule(query string) {
 	fmt.Println(string(enc))
 }
 
-func getRules() {
+func getRules() []*twitter.TweetSearchStreamRuleEntity {
 	client, err := getClient()
 	if err != nil {
 		panic(err)
@@ -59,33 +110,40 @@ func getRules() {
 		log.Panicf("tweet search stream rule callout error: %v", err)
 	}
 
-	enc, err := json.MarshalIndent(searchStreamRules, "", "    ")
-	if err != nil {
-		log.Panic(err)
-	}
-	fmt.Println(string(enc))
+	return searchStreamRules.Rules
 }
 
-func deleteRules(ids string) {
-	client, err := getClient()
-	if err != nil {
-		panic(err)
+func deleteAllRules() {
+	rules := getRules()
+	ruleIds := make([]string, len(rules))
+	for i, r := range rules {
+		ruleIds[i] = string(r.ID)
 	}
+	deleteRules(ruleIds)
+}
 
-	ruleIDs := []twitter.TweetSearchStreamRuleID{}
-	for _, id := range strings.Split(ids, ",") {
-		ruleIDs = append(ruleIDs, twitter.TweetSearchStreamRuleID(id))
-	}
-	searchStreamRules, err := client.TweetSearchStreamDeleteRuleByID(context.Background(), ruleIDs, false)
-	if err != nil {
-		log.Panicf("tweet search stream delete rule callout error: %v", err)
-	}
+func deleteRules(ids []string) {
+	if len(ids) > 0 {
+		client, err := getClient()
+		if err != nil {
+			panic(err)
+		}
 
-	enc, err := json.MarshalIndent(searchStreamRules, "", "    ")
-	if err != nil {
-		log.Panic(err)
+		ruleIDs := []twitter.TweetSearchStreamRuleID{}
+		for _, id := range ids {
+			ruleIDs = append(ruleIDs, twitter.TweetSearchStreamRuleID(id))
+		}
+		searchStreamRules, err := client.TweetSearchStreamDeleteRuleByID(context.Background(), ruleIDs, false)
+		if err != nil {
+			log.Panicf("tweet search stream delete rule callout error: %v", err)
+		}
+
+		enc, err := json.MarshalIndent(searchStreamRules, "", "    ")
+		if err != nil {
+			log.Panic(err)
+		}
+		fmt.Println(string(enc))
 	}
-	fmt.Println(string(enc))
 }
 
 type authorize struct {
@@ -104,7 +162,6 @@ func getClient() (*twitter.Client, error) {
 	flag.Parse()
 	flagutil.SetFlagsFromEnv(flag.CommandLine, "TWITTER")
 
-	fmt.Println(TWITTER_BEARER_TOKEN)
 	client := &twitter.Client{
 		Authorizer: authorize{
 			Token: TWITTER_BEARER_TOKEN,
