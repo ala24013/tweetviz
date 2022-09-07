@@ -26,11 +26,11 @@ run: deps
 
 .PHONY: stream
 stream: deps
-	$(ENV) go run ./cmd/streaming/streaming.go
+	$(ENV) go run ./cmd/stream/main.go
 
 .PHONY: test
 test:
-	go test -cover ./...
+	go test -cover ./pkg/...
 
 .PHONY: cover
 cover:

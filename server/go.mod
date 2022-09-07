@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/coreos/pkg v0.0.0-20220810130054-c7d1c02cb6cf
 	github.com/dghubble/go-twitter v0.0.0-20220816163853-8a0df96f1e6d
+	github.com/g8rswimmer/go-twitter/v2 v2.1.2
 	github.com/gofiber/fiber/v2 v2.36.0
 	golang.org/x/oauth2 v0.0.0-20220822191816-0ebed06d0094
 )
@@ -15,7 +16,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dghubble/oauth1 v0.7.1 // indirect
 	github.com/dghubble/sling v1.4.0 // indirect
-	github.com/g8rswimmer/go-twitter v1.1.4 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
