@@ -28,7 +28,11 @@ func streamTweets(shutdown <-chan int) {
 		panic(err)
 	}
 
-	s, err := client.TweetSearchStream(context.Background(), twitter.TweetSearchStreamOpts{})
+	opts := twitter.TweetSearchStreamOpts{
+		PlaceFields: []twitter.PlaceField{"geo"},
+	}
+
+	s, err := client.TweetSearchStream(context.Background(), opts)
 	if err != nil {
 		log.Panicf("tweet sample callout error: %v", err)
 	}
@@ -42,10 +46,8 @@ func streamTweets(shutdown <-chan int) {
 				return
 			case tm := <-s.Tweets():
 				tweets := tm.Raw.Tweets
-				users := tm.Raw.Includes.Users
-				for _, user := range users {
-					fmt.Printf("USER: %s", user.Name)
-				}
+				users := tm.Raw.Includes
+				fmt.Println(users)
 				for _, tweet := range tweets {
 					fmt.Printf("Tweet: %s\n", string(tweet.Text))
 					fmt.Printf("AuthorID: %s\n", string(tweet.AuthorID))
