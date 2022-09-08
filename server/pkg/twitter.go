@@ -29,9 +29,21 @@ func streamTweets(shutdown <-chan int) {
 	}
 
 	opts := twitter.TweetSearchStreamOpts{
-		PlaceFields: []twitter.PlaceField{"geo"},
+		Expansions: []twitter.Expansion{
+			twitter.ExpansionGeoPlaceID,
+		},
+		PlaceFields: []twitter.PlaceField{
+			twitter.PlaceFieldGeo,
+			twitter.PlaceFieldCountry,
+			twitter.PlaceFieldName,
+		},
+		UserFields: []twitter.UserField{
+			twitter.UserFieldName,
+			twitter.UserFieldID,
+		},
 	}
 
+	fmt.Println(opts)
 	s, err := client.TweetSearchStream(context.Background(), opts)
 	if err != nil {
 		log.Panicf("tweet sample callout error: %v", err)
@@ -45,10 +57,7 @@ func streamTweets(shutdown <-chan int) {
 				fmt.Println("closing")
 				return
 			case tm := <-s.Tweets():
-				tweets := tm.Raw.Tweets
-				users := tm.Raw.Includes
-				fmt.Println(users)
-				for _, tweet := range tweets {
+				for _, tweet := range tm.Raw.Tweets {
 					fmt.Printf("Tweet: %s\n", string(tweet.Text))
 					fmt.Printf("AuthorID: %s\n", string(tweet.AuthorID))
 					c := tweet.Geo
@@ -59,6 +68,11 @@ func streamTweets(shutdown <-chan int) {
 						//long := c[1]
 						//fmt.Printf("Geo: Lat %f Long %f\n", lat, long)
 					}
+					enc, err := json.MarshalIndent(tm, "", "    ")
+					if err != nil {
+						panic(err)
+					}
+					fmt.Println(string(enc))
 				}
 			case sm := <-s.SystemMessages():
 				smb, err := json.Marshal(sm)
@@ -85,7 +99,7 @@ func addRule(query string) {
 	}
 
 	streamRule := twitter.TweetSearchStreamRule{
-		Value: query,
+		Value: fmt.Sprintf("%s has:geo", query),
 		Tag:   fmt.Sprintf("%s rule", query),
 	}
 
