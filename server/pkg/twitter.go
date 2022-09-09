@@ -30,12 +30,11 @@ func streamTweets(shutdown <-chan int) {
 
 	opts := twitter.TweetSearchStreamOpts{
 		Expansions: []twitter.Expansion{
+			twitter.ExpansionAuthorID,
 			twitter.ExpansionGeoPlaceID,
 		},
 		PlaceFields: []twitter.PlaceField{
 			twitter.PlaceFieldGeo,
-			twitter.PlaceFieldCountry,
-			twitter.PlaceFieldName,
 		},
 		UserFields: []twitter.UserField{
 			twitter.UserFieldName,
@@ -57,23 +56,7 @@ func streamTweets(shutdown <-chan int) {
 				fmt.Println("closing")
 				return
 			case tm := <-s.Tweets():
-				for _, tweet := range tm.Raw.Tweets {
-					fmt.Printf("Tweet: %s\n", string(tweet.Text))
-					fmt.Printf("AuthorID: %s\n", string(tweet.AuthorID))
-					c := tweet.Geo
-					if tweet.Geo != nil {
-						fmt.Printf("GOT SOME GEO: ")
-						fmt.Println(c)
-						//lat := c[0]
-						//long := c[1]
-						//fmt.Printf("Geo: Lat %f Long %f\n", lat, long)
-					}
-					enc, err := json.MarshalIndent(tm, "", "    ")
-					if err != nil {
-						panic(err)
-					}
-					fmt.Println(string(enc))
-				}
+				processTweet(tm)
 			case sm := <-s.SystemMessages():
 				smb, err := json.Marshal(sm)
 				if err != nil {

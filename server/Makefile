@@ -22,7 +22,7 @@ build: deps
 
 .PHONY: run
 run: deps
-	go run ./...
+	$(ENV) go run ./cmd/main/main.go
 
 .PHONY: stream
 stream: deps
