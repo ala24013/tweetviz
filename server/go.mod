@@ -6,7 +6,8 @@ require (
 	github.com/coreos/pkg v0.0.0-20220810130054-c7d1c02cb6cf
 	github.com/dghubble/go-twitter v0.0.0-20220816163853-8a0df96f1e6d
 	github.com/g8rswimmer/go-twitter/v2 v2.1.2
-	github.com/gofiber/fiber/v2 v2.36.0
+	github.com/gofiber/fiber/v2 v2.37.0
+	github.com/gofiber/websocket/v2 v2.0.25
 	golang.org/x/oauth2 v0.0.0-20220822191816-0ebed06d0094
 )
 
@@ -16,13 +17,15 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dghubble/oauth1 v0.7.1 // indirect
 	github.com/dghubble/sling v1.4.0 // indirect
+	github.com/fasthttp/websocket v1.5.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/savsgio/gotils v0.0.0-20211223103454-d0aaa54c5899 // indirect
 	github.com/stretchr/testify v1.8.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.38.0 // indirect
+	github.com/valyala/fasthttp v1.39.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 	golang.org/x/net v0.0.0-20220624214902-1bab6f366d9e // indirect
