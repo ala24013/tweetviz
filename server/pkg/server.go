@@ -46,7 +46,7 @@ func SetupServer() *fiber.App {
 		for {
 			time.Sleep(1 * time.Second)
 			msg := time.Now()
-			err := c.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("%d", msg)))
+			err := c.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("%d", msg.UnixMilli())))
 			if err != nil {
 				log.Println("write:", err)
 				break

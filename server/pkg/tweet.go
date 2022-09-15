@@ -30,7 +30,7 @@ func findCenter(box []float64) ([]float64, error) {
 	return []float64{longCenter, latCenter}, nil
 }
 
-func processTweet(t *twitter.TweetMessage) {
+func processTweet(t *twitter.TweetMessage) (Tweet, error) {
 	var aid string
 	var username string
 	var text string
@@ -43,7 +43,7 @@ func processTweet(t *twitter.TweetMessage) {
 		box := place.Geo.BBox
 		center, err := findCenter(box)
 		if err != nil {
-			return
+			return Tweet{}, err
 		}
 		centerGeo = center
 	}
@@ -57,8 +57,8 @@ func processTweet(t *twitter.TweetMessage) {
 		Tweet:    text,
 		Geo:      centerGeo,
 	}
-	//printRawTweet(t)
-	printFormattedTweet(tweet)
+
+	return tweet, nil
 }
 
 func printRawTweet(t *twitter.TweetMessage) {

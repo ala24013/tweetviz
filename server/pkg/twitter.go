@@ -56,7 +56,11 @@ func streamTweets(shutdown <-chan int) {
 				fmt.Println("closing")
 				return
 			case tm := <-s.Tweets():
-				processTweet(tm)
+				tw, err := processTweet(tm)
+				if err != nil {
+					fmt.Printf("error decoding tweet %v", err)
+				}
+				printFormattedTweet(tw)
 			case sm := <-s.SystemMessages():
 				smb, err := json.Marshal(sm)
 				if err != nil {

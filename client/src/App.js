@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import World from './world';
 import Websocket from './websocket';
 
