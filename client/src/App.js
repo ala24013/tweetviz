@@ -1,12 +1,13 @@
 import React from 'react';
-import World from './world';
+//import World from './world';
+import Map from './map'
 import Websocket from './websocket';
 
 function App() {
   return (
     <div className="App">
       <body>
-        <World />
+        <Map />
         <Websocket />
       </body>
     </div>
