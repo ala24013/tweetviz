@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/coreos/pkg/flagutil"
 	twitter "github.com/g8rswimmer/go-twitter/v2"
@@ -16,13 +17,13 @@ var (
 	TWITTER_BEARER_TOKEN string
 )
 
-func Stream(query string, shutdown <-chan int) {
+func Stream(query string, t *Tweetlist, shutdown <-chan int) {
 	deleteAllRules()
 	addRule(query)
-	streamTweets(shutdown)
+	streamTweets(t, shutdown)
 }
 
-func streamTweets(shutdown <-chan int) {
+func streamTweets(t *Tweetlist, shutdown <-chan int) {
 	client, err := getClient()
 	if err != nil {
 		panic(err)
@@ -60,6 +61,11 @@ func streamTweets(shutdown <-chan int) {
 				if err != nil {
 					fmt.Printf("error decoding tweet %v", err)
 				}
+				t.addTweet(tw)
+				go func() {
+					time.Sleep(5 * time.Second)
+					t.delTweet(tw)
+				}()
 				printFormattedTweet(tw)
 			case sm := <-s.SystemMessages():
 				smb, err := json.Marshal(sm)

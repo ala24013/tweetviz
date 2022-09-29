@@ -1,7 +1,7 @@
 import React from 'react';
 import useWebSocket from 'react-use-websocket';
 
-const Websocket = () => {
+const Websocket = (props) => {
     const socketUrl = `ws://${document.location.host}/ws`;
 
     const {
@@ -13,7 +13,10 @@ const Websocket = () => {
         getWebSocket,
     } = useWebSocket(socketUrl, {
         onOpen: () => console.log('opened'),
-        onMessage: (msg) => console.log(msg),
+        onMessage: (msg) => {
+            const data = JSON.parse(msg.data)
+            props.setTweets(data)
+        },
         shouldReconnect: (closeEvent) => true,
     })
 

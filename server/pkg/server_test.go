@@ -8,6 +8,7 @@ import (
 )
 
 func TestSetupServer(t *testing.T) {
-	server := SetupServer()
+	tl := CreateTweetlist()
+	server := SetupServer(tl)
 	assert.IsType(t, server, &fiber.App{}, "Could not set up fiber server.")
 }

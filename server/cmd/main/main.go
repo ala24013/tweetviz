@@ -13,13 +13,14 @@ func main() {
 	sigs := make(chan os.Signal, 1)
 	shutdown := make(chan int)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	tl := tweetviz.CreateTweetlist()
 	go func() {
 		fmt.Println("Starting webserver...")
-		tweetviz.RunServer()
+		tweetviz.RunServer(tl)
 	}()
 	go func() {
 		fmt.Println("Starting twitter stream...")
-		tweetviz.Stream("test", shutdown)
+		tweetviz.Stream("Ian", tl, shutdown)
 	}()
 	<-sigs
 	fmt.Println("Shutting down...")

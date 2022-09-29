@@ -11,27 +11,7 @@ import (
 	"github.com/gofiber/websocket/v2"
 )
 
-/*
-type client struct{}
-
-var clients = make(map[*websocket.Conn]client)
-var  = make(chan *websocket.Conn)
-
-func runBroker(tweets chan *) {
-	for c := range tweets {
-		for connection := range clients {
-			if err := connection.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
-				log.Println("write error:", err)
-
-				connection.WriteMessage(websocket.CloseMessage, []byte{})
-				connection.Close()
-				delete(clients, connection)
-			}
-		}
-	}
-}*/
-
-func SetupServer() *fiber.App {
+func SetupServer(t *Tweetlist) *fiber.App {
 	app := fiber.New()
 
 	app.Use(cors.New())
@@ -45,8 +25,12 @@ func SetupServer() *fiber.App {
 		fmt.Println("HELLO")
 		for {
 			time.Sleep(1 * time.Second)
-			msg := time.Now()
-			err := c.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("%d", msg.UnixMilli())))
+			s, err := t.serialize()
+			if err != nil {
+				log.Println("Failed to serialize!")
+				break
+			}
+			err = c.WriteMessage(websocket.TextMessage, s)
 			if err != nil {
 				log.Println("write:", err)
 				break
@@ -57,7 +41,7 @@ func SetupServer() *fiber.App {
 	return app
 }
 
-func RunServer() {
-	server := SetupServer()
+func RunServer(t *Tweetlist) {
+	server := SetupServer(t)
 	log.Fatal(server.Listen(":3000"))
 }

@@ -52,6 +52,10 @@ func processTweet(t *twitter.TweetMessage) (Tweet, error) {
 			username = user.UserName
 		}
 	}
+
+	// Invert from twitter's long/lat format to the map's lat/long format
+	centerGeo[0], centerGeo[1] = centerGeo[1], centerGeo[0]
+
 	tweet := Tweet{
 		Username: username,
 		Tweet:    text,
