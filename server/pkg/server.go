@@ -1,7 +1,6 @@
 package tweetviz
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/gofiber/websocket/v2"
 )
 
+// SetupServer creates the fiber application
 func SetupServer(t *Tweetlist) *fiber.App {
 	app := fiber.New()
 
@@ -22,7 +22,6 @@ func SetupServer(t *Tweetlist) *fiber.App {
 		return c.SendString("Hello, World!")
 	})
 	app.Get("/ws", websocket.New(func(c *websocket.Conn) {
-		fmt.Println("HELLO")
 		for {
 			time.Sleep(1 * time.Second)
 			s, err := t.serialize()
@@ -41,6 +40,7 @@ func SetupServer(t *Tweetlist) *fiber.App {
 	return app
 }
 
+// RunServer runs the webserver
 func RunServer(t *Tweetlist) {
 	server := SetupServer(t)
 	log.Fatal(server.Listen(":3000"))

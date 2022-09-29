@@ -66,7 +66,7 @@ func streamTweets(t *Tweetlist, shutdown <-chan int) {
 					time.Sleep(5 * time.Second)
 					t.delTweet(tw)
 				}()
-				printFormattedTweet(tw)
+				//printFormattedTweet(tw)
 			case sm := <-s.SystemMessages():
 				smb, err := json.Marshal(sm)
 				if err != nil {

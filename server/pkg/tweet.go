@@ -8,12 +8,14 @@ import (
 	twitter "github.com/g8rswimmer/go-twitter/v2"
 )
 
+// Tweet represents a single tweet object containing the data we care about
 type Tweet struct {
 	Username string
 	Tweet    string
 	Geo      []float64
 }
 
+// String serializes a tweet to a string
 func (t Tweet) String() string {
 	return fmt.Sprintf(
 		"Username: %s\nTweet: %s\nGeo: [%f, %f]",
@@ -21,6 +23,7 @@ func (t Tweet) String() string {
 	)
 }
 
+// findCenter finds the center of the boundary box that twitter provides
 func findCenter(box []float64) ([]float64, error) {
 	if len(box) != 4 {
 		return nil, errors.New("Invalid box, must contain 4 elements in slice")
@@ -30,6 +33,7 @@ func findCenter(box []float64) ([]float64, error) {
 	return []float64{longCenter, latCenter}, nil
 }
 
+// processTweet grabs the important information out of the raw tweet
 func processTweet(t *twitter.TweetMessage) (Tweet, error) {
 	var aid string
 	var username string
@@ -65,6 +69,7 @@ func processTweet(t *twitter.TweetMessage) (Tweet, error) {
 	return tweet, nil
 }
 
+// printRawTweet prints out the tweet message (for debugging)
 func printRawTweet(t *twitter.TweetMessage) {
 	enc, err := json.MarshalIndent(t, "", "    ")
 	if err != nil {
@@ -73,6 +78,7 @@ func printRawTweet(t *twitter.TweetMessage) {
 	fmt.Println(string(enc))
 }
 
+// printFormattedTweet prints out our customized tweet (for debugging)
 func printFormattedTweet(t Tweet) {
 	fmt.Println(t.String())
 }
