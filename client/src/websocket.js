@@ -1,28 +1,26 @@
-import React from 'react';
-import useWebSocket from 'react-use-websocket';
+import React from "react";
+import useWebSocket from "react-use-websocket";
 
 const Websocket = (props) => {
-    const socketUrl = `ws://${document.location.host}/ws`;
+  const socketUrl = `ws://${document.location.host}/ws`;
 
-    const {
-        sendMessage,
-        sendJsonMessage,
-        lastMessage,
-        lastJsonMessage,
-        readyState,
-        getWebSocket,
-    } = useWebSocket(socketUrl, {
-        onOpen: () => console.log('opened'),
-        onMessage: (msg) => {
-            const data = JSON.parse(msg.data)
-            props.setTweets(data)
-        },
-        shouldReconnect: (closeEvent) => true,
-    })
+  const {
+    sendMessage,
+    sendJsonMessage,
+    lastMessage,
+    lastJsonMessage,
+    readyState,
+    getWebSocket,
+  } = useWebSocket(socketUrl, {
+    onOpen: () => console.log("opened"),
+    onMessage: (msg) => {
+      const data = JSON.parse(msg.data);
+      props.setTweets(data);
+    },
+    shouldReconnect: (closeEvent) => true,
+  });
 
-    return (
-        <div></div>
-    )
-}
+  return <div></div>;
+};
 
-export default Websocket
+export default Websocket;

@@ -24,13 +24,13 @@ build: deps
 run: deps
 	$(ENV) go run ./cmd/main/main.go
 
-.PHONY: stream
-stream: deps
-	$(ENV) go run ./cmd/stream/main.go
-
 .PHONY: test
 test:
 	go test -cover ./pkg/...
+
+.PHONY: critic
+critic: 
+	gocritic check -enableAll ./pkg/...
 
 .PHONY: cover
 cover:
