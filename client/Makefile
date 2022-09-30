@@ -8,10 +8,13 @@ else
 endif
 
 install:
-	npm run-script install
+	npm install
 
 build:
 	npm run-script build
+
+.PHONY: test
+test:
 
 .PHONY: pretty
 pretty:

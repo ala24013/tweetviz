@@ -17,12 +17,14 @@ var (
 	TWITTER_BEARER_TOKEN string
 )
 
+// Stream conducts the high level logic to manage the rules and stream tweets
 func Stream(query string, t *Tweetlist, shutdown <-chan int) {
 	deleteAllRules()
 	addRule(query)
 	streamTweets(t, shutdown)
 }
 
+// streamTweets streams in the tweets from Twitter
 func streamTweets(t *Tweetlist, shutdown <-chan int) {
 	client, err := getClient()
 	if err != nil {
@@ -84,6 +86,7 @@ func streamTweets(t *Tweetlist, shutdown <-chan int) {
 	}()
 }
 
+// addRule adds a new rule to the twitter stream
 func addRule(query string) {
 	client, err := getClient()
 	if err != nil {
@@ -107,6 +110,7 @@ func addRule(query string) {
 	fmt.Println(string(enc))
 }
 
+// getRules returns the slice of twitter rules that are currently in place on the stream
 func getRules() []*twitter.TweetSearchStreamRuleEntity {
 	client, err := getClient()
 	if err != nil {
@@ -121,6 +125,7 @@ func getRules() []*twitter.TweetSearchStreamRuleEntity {
 	return searchStreamRules.Rules
 }
 
+// deleteAllRules removes all the existing rules on the twitter stream
 func deleteAllRules() {
 	rules := getRules()
 	ruleIds := make([]string, len(rules))
@@ -130,6 +135,7 @@ func deleteAllRules() {
 	deleteRules(ruleIds)
 }
 
+// deleteRules removes rules by their id's from the twitter stream
 func deleteRules(ids []string) {
 	if len(ids) > 0 {
 		client, err := getClient()
@@ -154,14 +160,17 @@ func deleteRules(ids []string) {
 	}
 }
 
+// authorize is the scructure containing the twitter bearer token
 type authorize struct {
 	Token string
 }
 
+// Add adds an authorization header to an HTTP request
 func (a authorize) Add(req *http.Request) {
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", a.Token))
 }
 
+// getClient gets a Twitter client
 func getClient() (*twitter.Client, error) {
 	if TWITTER_BEARER_TOKEN == "" {
 		flag.StringVar(&TWITTER_BEARER_TOKEN, "bearer-token", "", "Twitter Bearer Token")
