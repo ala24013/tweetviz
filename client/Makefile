@@ -13,6 +13,11 @@ install:
 build:
 	npm run-script build
 
+.PHONY: pretty
+pretty:
+	npx prettier --write ./public
+	npx prettier --write ./src
+
 .PHONY: clean
 clean:
 	$(RM) ./build

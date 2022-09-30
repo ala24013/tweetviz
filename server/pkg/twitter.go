@@ -66,7 +66,6 @@ func streamTweets(t *Tweetlist, shutdown <-chan int) {
 					time.Sleep(5 * time.Second)
 					t.delTweet(tw)
 				}()
-				//printFormattedTweet(tw)
 			case sm := <-s.SystemMessages():
 				smb, err := json.Marshal(sm)
 				if err != nil {
@@ -164,12 +163,14 @@ func (a authorize) Add(req *http.Request) {
 }
 
 func getClient() (*twitter.Client, error) {
-	//token := flag.String("token", os.Getenv("TWITTER_BEARER_TOKEN"), "twitter API token")
 	if TWITTER_BEARER_TOKEN == "" {
 		flag.StringVar(&TWITTER_BEARER_TOKEN, "bearer-token", "", "Twitter Bearer Token")
 	}
 	flag.Parse()
-	flagutil.SetFlagsFromEnv(flag.CommandLine, "TWITTER")
+	err := flagutil.SetFlagsFromEnv(flag.CommandLine, "TWITTER")
+	if err != nil {
+		panic("TWITTER_BEARER_TOKEN Not found!")
+	}
 
 	client := &twitter.Client{
 		Authorizer: authorize{
