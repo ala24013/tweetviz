@@ -1,17 +1,13 @@
-# Fix environment
-include ./.env
-
 # Cross platform support
 ifeq ($(OS), Windows_NT)
   MV=move
   RM=del -Recurse -Force
   EXT=.exe
-  GOPATH=
+  GOPATH="C:\Program Files\Go\bin\"
 else
   MV=mv -f
   RM=rm -rf
   EXT=""
-  ENV=TWITTER_CONSUMER_KEY=$(TWITTER_CONSUMER_KEY) TWITTER_CONSUMER_SECRET=$(TWITTER_CONSUMER_SECRET) TWITTER_BEARER_TOKEN=$(TWITTER_BEARER_TOKEN) TWITTER_ACCESS_KEY=$(TWITTER_ACCESS_KEY) TWITTER_ACCESS_SECRET=$(TWITTER_ACCESS_SECRET) 
   GOPATH=~/go/bin
 endif
 
@@ -24,7 +20,7 @@ build: install
 
 .PHONY: run
 run: install
-	$(ENV) go run ./cmd/main/main.go
+	go run ./cmd/main/main.go
 
 .PHONY: test
 test:
