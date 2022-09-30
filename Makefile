@@ -16,6 +16,10 @@ run: install
 	cd client && $(MAKE) build
 	cd server && $(MAKE) run
 
+build: install
+	cd client && $(MAKE) build
+	cd server && $(MAKE) build
+
 test: install
 	cd client && $(MAKE) test
 	cd server && $(MAKE) test
