@@ -1,8 +1,8 @@
-import React from "react"
+import React, { useState } from "react"
 import { TextInput, Button, Box, ActionIcon } from "@mantine/core"
 import { IconSearch } from "@tabler/icons"
 
-DEFAULT_SEARCH = "Ian"
+const DEFAULT_SEARCH = "Ian"
 
 export default function SearchBar(props) {
     const [searchValue, setSearchValue] = useState(DEFAULT_SEARCH)
