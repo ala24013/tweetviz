@@ -12,12 +12,13 @@ const Websocket = (props) => {
     readyState,
     getWebSocket,
   } = useWebSocket(socketUrl, {
-    onOpen: () => console.log("opened"),
+    onOpen: () => console.log("opened ws"),
     onMessage: (msg) => {
       const data = JSON.parse(msg.data);
       props.setTweets(data);
     },
     shouldReconnect: (closeEvent) => true,
+    onClose: () => console.log("closed ws")
   });
 
   return <div></div>;

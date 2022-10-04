@@ -1,26 +1,23 @@
 import React, { useState } from "react";
-//import World from './world';
+import { MantineProvider } from '@mantine/core';
+
 import Map from "./map";
 import Websocket from "./websocket";
-
-const INITIAL_STATE = [
-  { Username: "hello", Geo: [0, 0], Tweet: "thetweet" },
-  { Username: "hi", Geo: [50, 50], Tweet: "thetweet2" },
-  { Username: "hi2", Geo: [45, 45], Tweet: "thetweet22" },
-  { Username: "hi3", Geo: [55, 55], Tweet: "thetweet23" },
-  { Username: "hi4", Geo: [60, 60], Tweet: "thetweet24" },
-];
+import SearchBar from "./searchBar";
 
 function App() {
-  const [tweets, setTweets] = useState(INITIAL_STATE);
+  const [tweets, setTweets] = useState([]);
 
   return (
-    <div className="App">
-      <body>
-        <Map tweets={tweets} />
-        <Websocket setTweets={setTweets} />
-      </body>
-    </div>
+    <MantineProvider withGlobalStyles withNormalizeCSS>
+      <div className="App">
+        <body>
+          <SearchBar />
+          <Map tweets={tweets} />
+          <Websocket setTweets={setTweets} />
+        </body>
+      </div>
+    </MantineProvider>
   );
 }
 
