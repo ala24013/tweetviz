@@ -9,7 +9,6 @@ require (
 	github.com/gofiber/fiber/v2 v2.38.1
 	github.com/gofiber/websocket/v2 v2.0.25
 	github.com/stretchr/testify v1.8.0
-	golang.org/x/exp v0.0.0-20220929160808-de9c53c655b9
 )
 
 require (
