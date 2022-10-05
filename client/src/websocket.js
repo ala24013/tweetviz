@@ -4,6 +4,7 @@ import useWebSocket from "react-use-websocket";
 const Websocket = (props) => {
   const socketUrl = `ws://${document.location.host}/ws`;
 
+  /* eslint-disable no-unused-vars */
   const {
     sendMessage,
     sendJsonMessage,
@@ -20,6 +21,7 @@ const Websocket = (props) => {
     shouldReconnect: (closeEvent) => true,
     onClose: () => console.log("closed ws")
   });
+  /* eslint-enable no-unused-vars */
 
   return <div></div>;
 };

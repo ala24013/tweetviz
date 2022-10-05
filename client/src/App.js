@@ -1,19 +1,28 @@
 import React, { useState } from "react";
 import { MantineProvider } from '@mantine/core';
 
-import Map from "./map";
+import WorldMap from "./worldMap";
 import Websocket from "./websocket";
-import SearchBar from "./searchBar";
+import TweetvizHeader from "./tweetvizHeader";
+
+const theme = {
+  colorScheme: 'dark',
+  headings: {
+    fontFamily: 'Roboto, sans-serif',
+    sizes: {
+      h1: { fontSize: 30 },
+    },
+}}
 
 function App() {
   const [tweets, setTweets] = useState([]);
 
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS>
+    <MantineProvider theme={theme}>
       <div className="App">
         <body>
-          <SearchBar />
-          <Map tweets={tweets} />
+          <TweetvizHeader />
+          <WorldMap tweets={tweets} />
           <Websocket setTweets={setTweets} />
         </body>
       </div>

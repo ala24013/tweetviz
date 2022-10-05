@@ -9,7 +9,8 @@ endif
 
 install:
 	npm install
-	
+
+.PHONY: build	
 build:
 	npm run-script build
 

@@ -1,14 +1,8 @@
 import React, { useEffect } from "react";
 import {
-  MapContainer,
-  TileLayer,
-  useMap,
-  Popup,
   Marker,
   Tooltip,
 } from "react-leaflet";
-
-import useTimeout from "./useTimeout";
 
 export default function Tweet(props) {
   const fadeOutCss = {

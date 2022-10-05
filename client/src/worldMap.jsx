@@ -3,7 +3,7 @@ import { MapContainer, TileLayer } from "react-leaflet";
 
 import Tweet from "./tweet";
 
-export default Map = (props) => {
+export default function WorldMap(props) {
   return (
     <MapContainer center={[41.9028, 12.4964]} zoom={5} scrollWheelZoom={true}>
       <TileLayer

@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { TextInput, Button, Box, ActionIcon } from "@mantine/core"
+import { TextInput, Box, ActionIcon } from "@mantine/core"
 import { IconSearch } from "@tabler/icons"
 
 const DEFAULT_SEARCH = "Ian"
@@ -12,16 +12,15 @@ export default function SearchBar(props) {
             <TextInput
                 value={searchValue}
                 onChange={(event) => setSearchValue(event.currentTarget.value)}
-                radius="xl"
-                size="lg"
+                radius="md"
+                size="md"
                 error={/^[0-9a-zA-Z]{0,50}$/.test(searchValue) ? null : "ASCII characters and Numbers only!"}
                 rightSection={
-                    <Button variant="subtle">
-                        <ActionIcon variant="subtle">
-                            <IconSearch />
-                        </ActionIcon>
-                    </Button>
+                    <ActionIcon variant="subtle">
+                        <IconSearch />
+                    </ActionIcon>
                 }
+                style={{paddingTop: "10vh", width: "50vw" }}
             />
         </Box>
     )
