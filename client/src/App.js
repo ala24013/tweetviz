@@ -5,6 +5,16 @@ import WorldMap from "./worldMap";
 import Websocket from "./websocket";
 import TweetvizHeader from "./tweetvizHeader";
 
+const PRIMARY_COLOR = "#1D9BF0"
+
+const styles = {
+  Title: (theme) => ({
+    root: {
+      color: PRIMARY_COLOR
+    }
+  })
+}
+
 const theme = {
   colorScheme: 'dark',
   headings: {
@@ -12,13 +22,17 @@ const theme = {
     sizes: {
       h1: { fontSize: 30 },
     },
+    colors: {
+      primary: [ PRIMARY_COLOR ]
+    },
+    primaryColor: 'primary',
 }}
 
 function App() {
   const [tweets, setTweets] = useState([]);
 
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} styles={styles}>
       <div className="App">
         <body>
           <TweetvizHeader />

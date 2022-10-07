@@ -18,6 +18,7 @@ func SetupServer(t *Tweetlist) *fiber.App {
 	app.Use(recover.New())
 
 	app.Static("/", "../client/build")
+	app.Static("/logo.png", "../client/build/logo.png")
 	app.Get("/hello", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World!")
 	})

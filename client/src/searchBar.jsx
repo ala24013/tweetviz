@@ -20,7 +20,7 @@ export default function SearchBar(props) {
                         <IconSearch />
                     </ActionIcon>
                 }
-                style={{paddingTop: "10vh", width: "50vw" }}
+                style={{ width: "40vw" }}
             />
         </Box>
     )
