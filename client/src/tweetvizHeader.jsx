@@ -9,7 +9,7 @@ export default function TweetvizHeader() {
         alignItems: 'center', height: '100%', width: '100%', maxWidth: '100%'}}>
         <Group style={{ width: '11vw', margin: '5vw', display: 'flex', justifyContent: 'space-around' }}>
           <Avatar size="md" src="logo.png" alt="Tweetviz Logo" />
-          <Title order={1}>Tweetviz</Title>
+          <Title order={1} style={{color: 'white'}}>Tweetviz</Title>
         </Group>
         <SearchBar />
         <Container style={{ margin: '5vw', width: '11vw' }}></Container>

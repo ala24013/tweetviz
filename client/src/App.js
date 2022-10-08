@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { MantineProvider } from '@mantine/core';
+import useWebSocket from "react-use-websocket";
 
 import WorldMap from "./worldMap";
-import Websocket from "./websocket";
 import TweetvizHeader from "./tweetvizHeader";
 
 const PRIMARY_COLOR = "#1D9BF0"
@@ -31,13 +31,28 @@ const theme = {
 function App() {
   const [tweets, setTweets] = useState([]);
 
+  const socketUrl = `ws://${document.location.host}/ws`;
+
+  /* eslint-disable no-unused-vars */
+  const {sendMessage} = useWebSocket(socketUrl, {
+    onOpen: () => console.log("opened ws"),
+    onMessage: (msg) => {
+      const data = JSON.parse(msg.data);
+      setTweets(data);
+    },
+    shouldReconnect: (closeEvent) => true,
+    onClose: () => console.log("closed ws")
+  });
+  /* eslint-enable no-unused-vars */
+
+  const handleSendMessage = useCallback((msg) => sendMessage(msg), [])
+
   return (
     <MantineProvider theme={theme} styles={styles}>
       <div className="App">
         <body>
-          <TweetvizHeader />
+          <TweetvizHeader sendMessage={handleSendMessage} />
           <WorldMap tweets={tweets} />
-          <Websocket setTweets={setTweets} />
         </body>
       </div>
     </MantineProvider>

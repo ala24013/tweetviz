@@ -23,6 +23,8 @@ const Websocket = (props) => {
   });
   /* eslint-enable no-unused-vars */
 
+  props.setSendWebsocket((val) => sendMessage(val))
+
   return <div></div>;
 };
 
