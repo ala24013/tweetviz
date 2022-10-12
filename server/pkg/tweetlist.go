@@ -1,7 +1,9 @@
 package tweetviz
 
 import (
+	"log"
 	"sync"
+	"time"
 
 	"github.com/goccy/go-json"
 )
@@ -55,4 +57,16 @@ func Values(m map[string]Tweet) []Tweet {
 func (t *Tweetlist) serialize() ([]byte, error) {
 	vals := Values(t.list)
 	return json.Marshal(vals)
+}
+
+// runTweetlist is a never-ending function to serialize and broadcast
+// the tweetlist to any listening clients
+func runTweetlist(t *Tweetlist) {
+	time.Sleep(1 * time.Second)
+	s, err := t.serialize()
+	if err != nil {
+		log.Println("Failed to serialize!")
+	}
+	toClient <- s
+	runTweetlist(t)
 }

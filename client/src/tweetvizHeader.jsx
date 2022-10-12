@@ -1,8 +1,10 @@
-import { Avatar, Header, Container, Group, Title } from '@mantine/core';
+import { Avatar, Header, Container, Group, Title, useInputProps } from '@mantine/core';
 
 import SearchBar from './searchBar'
 
-export default function TweetvizHeader() {
+export const HEADER_HEIGHT = 60;
+
+export default function TweetvizHeader(props) {
   return (
     <Header height={60} style={{ display: 'flex', justifyContent: 'space-evenly', alignItems: "center" }}>
       <Container style={{ display:'flex', justifyContent: 'space-between',
@@ -11,7 +13,7 @@ export default function TweetvizHeader() {
           <Avatar size="md" src="logo.png" alt="Tweetviz Logo" />
           <Title order={1} style={{color: 'white'}}>Tweetviz</Title>
         </Group>
-        <SearchBar />
+        <SearchBar sendMessage={props.sendMessage} />
         <Container style={{ margin: '5vw', width: '11vw' }}></Container>
       </Container>
     </Header>

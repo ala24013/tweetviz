@@ -2,10 +2,12 @@ import React from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 
 import Tweet from "./tweet";
+import { HEADER_HEIGHT } from "./tweetvizHeader";
 
 export default function WorldMap(props) {
+  const height = window.innerHeight - HEADER_HEIGHT;
   return (
-    <MapContainer center={[41.9028, 12.4964]} zoom={5} scrollWheelZoom={true}>
+    <MapContainer style={{height: `${height}px`}} center={[41.9028, 12.4964]} zoom={5} scrollWheelZoom={true}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

@@ -45,13 +45,11 @@ function App() {
   });
   /* eslint-enable no-unused-vars */
 
-  const handleSendMessage = useCallback((msg) => sendMessage(msg), [])
-
   return (
     <MantineProvider theme={theme} styles={styles}>
       <div className="App">
         <body>
-          <TweetvizHeader sendMessage={handleSendMessage} />
+          <TweetvizHeader sendMessage={(msg) => sendMessage(msg)} />
           <WorldMap tweets={tweets} />
         </body>
       </div>
