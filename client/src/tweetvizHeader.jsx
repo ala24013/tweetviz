@@ -13,7 +13,7 @@ export default function TweetvizHeader(props) {
           <Avatar size="md" src="logo.png" alt="Tweetviz Logo" />
           <Title order={1} style={{color: 'white'}}>Tweetviz</Title>
         </Group>
-        <SearchBar sendMessage={props.sendMessage} />
+        <SearchBar sendMessage={props.sendMessage} loading={props.loading} />
         <Container style={{ margin: '5vw', width: '11vw' }}></Container>
       </Container>
     </Header>

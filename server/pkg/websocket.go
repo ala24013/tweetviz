@@ -2,6 +2,7 @@ package tweetviz
 
 import (
 	"log"
+	"time"
 
 	"github.com/gofiber/websocket/v2"
 )
@@ -27,10 +28,30 @@ func runWebsockets() {
 		case message := <-fromClient:
 			m := string(message)
 			log.Println("message received:", m)
+			time.Sleep(2 * time.Second)
+			for c := range clients {
+				msg := CreateDoneLoadingMessage()
+				sm, err := msg.serialize()
+				if err != nil {
+					continue
+				}
+				if err := c.WriteMessage(websocket.TextMessage, sm); err != nil {
+					log.Println("write error:", err)
+
+					unregister <- c
+					c.WriteMessage(websocket.CloseMessage, []byte{})
+					c.Close()
+				}
+			}
 
 		case tweetlist := <-toClient:
 			for c := range clients {
-				if err := c.WriteMessage(websocket.TextMessage, tweetlist); err != nil {
+				msg := CreateTweetlistMessage(tweetlist)
+				sm, err := msg.serialize()
+				if err != nil {
+					continue
+				}
+				if err := c.WriteMessage(websocket.TextMessage, sm); err != nil {
 					log.Println("write error:", err)
 
 					unregister <- c
