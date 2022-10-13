@@ -18,14 +18,14 @@ var (
 )
 
 // Stream conducts the high level logic to manage the rules and stream tweets
-func Stream(query string, t *Tweetlist, shutdown <-chan int) {
+func Stream(query string, t *Tweetlist) {
 	deleteAllRules()
 	addRule(query)
-	streamTweets(t, shutdown)
+	streamTweets(t)
 }
 
 // streamTweets streams in the tweets from Twitter
-func streamTweets(t *Tweetlist, shutdown <-chan int) {
+func streamTweets(t *Tweetlist) {
 	client, err := getClient()
 	if err != nil {
 		panic(err)
@@ -55,8 +55,8 @@ func streamTweets(t *Tweetlist, shutdown <-chan int) {
 		defer s.Close()
 		for {
 			select {
-			case <-shutdown:
-				fmt.Println("closing")
+			case <-streamShutdown:
+				fmt.Println("closing stream")
 				return
 			case tm := <-s.Tweets():
 				tw, err := processTweet(tm)
