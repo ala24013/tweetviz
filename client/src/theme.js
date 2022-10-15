@@ -14,11 +14,11 @@ export const theme = {
     fontFamily: 'Roboto, sans-serif',
     sizes: {
       h1: { fontSize: 30 },
-    },
-    colors: {
-      primary: [ PRIMARY_COLOR ]
-    },
-    primaryColor: 'primary',
-    loader: 'bars'
-  }
+    }
+  },
+  colors: {
+    primary: [ PRIMARY_COLOR ]
+  },
+  primaryColor: 'primary',
+  loader: 'bars'
 }

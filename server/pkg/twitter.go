@@ -3,6 +3,7 @@ package tweetviz
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log"
@@ -22,6 +23,33 @@ func Stream(query string, t *Tweetlist) {
 	deleteAllRules()
 	addRule(query)
 	streamTweets(t)
+}
+
+// wrappedStream wraps the TweetSearchStream function, attempting to
+// connect a stream. Since twitter is lazy in checking whether a stream
+// is alive or not, it will be slow to update that an old client has
+// disconnected, and will frequently be overly aggressive with its
+// TooManyConnections errors.
+func wrappedStream(client *twitter.Client, opts twitter.TweetSearchStreamOpts) (*twitter.TweetStream, error) {
+	for i := 1; i < 20; i++ {
+		log.Printf("Attempting to connect stream.")
+		s, err := client.TweetSearchStream(context.Background(), opts)
+		if err != nil {
+			e, ok := err.(*twitter.ErrorResponse)
+			if ok {
+				if e.StatusCode == 429 {
+					// Client is connected error, let's wait 1 second and try again
+					time.Sleep(1 * time.Second)
+					continue
+				}
+			}
+			log.Panicf("%v", err)
+		}
+		log.Printf("Stream connected.")
+		doneLoading <- 0
+		return s, nil
+	}
+	return nil, errors.New("failed connecting 20 times")
 }
 
 // streamTweets streams in the tweets from Twitter
@@ -45,10 +73,9 @@ func streamTweets(t *Tweetlist) {
 		},
 	}
 
-	fmt.Println(opts)
-	s, err := client.TweetSearchStream(context.Background(), opts)
+	s, err := wrappedStream(client, opts)
 	if err != nil {
-		log.Panicf("tweet sample callout error: %v", err)
+		log.Panicf("%v", err)
 	}
 
 	func() {
@@ -56,12 +83,12 @@ func streamTweets(t *Tweetlist) {
 		for {
 			select {
 			case <-streamShutdown:
-				fmt.Println("closing stream")
+				log.Println("closing stream")
 				return
 			case tm := <-s.Tweets():
 				tw, err := processTweet(tm)
 				if err != nil {
-					fmt.Printf("error decoding tweet %v", err)
+					log.Printf("error decoding tweet %v", err)
 				}
 				t.addTweet(tw)
 				go func() {
@@ -71,15 +98,15 @@ func streamTweets(t *Tweetlist) {
 			case sm := <-s.SystemMessages():
 				smb, err := json.Marshal(sm)
 				if err != nil {
-					fmt.Printf("error decoding system message %v", err)
+					log.Printf("error decoding system message %v", err)
 				}
-				fmt.Printf("system: %s\n\n", string(smb))
+				log.Printf("system: %s\n\n", string(smb))
 			case strErr := <-s.Err():
-				fmt.Printf("error: %v\n\n", strErr)
+				log.Printf("error: %v\n\n", strErr)
 			default:
 			}
 			if s.Connection() == false {
-				fmt.Println("connection lost")
+				log.Println("connection lost")
 				return
 			}
 		}
@@ -98,16 +125,10 @@ func addRule(query string) {
 		Tag:   fmt.Sprintf("%s rule", query),
 	}
 
-	searchStreamRules, err := client.TweetSearchStreamAddRule(context.Background(), []twitter.TweetSearchStreamRule{streamRule}, false)
+	_, err = client.TweetSearchStreamAddRule(context.Background(), []twitter.TweetSearchStreamRule{streamRule}, false)
 	if err != nil {
 		log.Panicf("tweet search stream add rule callout error: %v", err)
 	}
-
-	enc, err := json.MarshalIndent(searchStreamRules, "", "    ")
-	if err != nil {
-		log.Panic(err)
-	}
-	fmt.Println(string(enc))
 }
 
 // getRules returns the slice of twitter rules that are currently in place on the stream
@@ -147,16 +168,11 @@ func deleteRules(ids []string) {
 		for _, id := range ids {
 			ruleIDs = append(ruleIDs, twitter.TweetSearchStreamRuleID(id))
 		}
-		searchStreamRules, err := client.TweetSearchStreamDeleteRuleByID(context.Background(), ruleIDs, false)
+
+		_, err = client.TweetSearchStreamDeleteRuleByID(context.Background(), ruleIDs, false)
 		if err != nil {
 			log.Panicf("tweet search stream delete rule callout error: %v", err)
 		}
-
-		enc, err := json.MarshalIndent(searchStreamRules, "", "    ")
-		if err != nil {
-			log.Panic(err)
-		}
-		fmt.Println(string(enc))
 	}
 }
 

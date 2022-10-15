@@ -16,7 +16,7 @@ func SetupServer(t *Tweetlist) *fiber.App {
 	app.Use(cors.New())
 	app.Use(recover.New())
 
-	go runWebsockets()
+	go runWebsockets(t)
 	go runTweetlist(t)
 
 	app.Static("/", "../client/build")

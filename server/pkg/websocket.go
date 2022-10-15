@@ -2,7 +2,6 @@ package tweetviz
 
 import (
 	"log"
-	"time"
 
 	"github.com/gofiber/websocket/v2"
 )
@@ -14,11 +13,12 @@ var clients = make(map[*websocket.Conn]client)
 var register = make(chan *websocket.Conn)
 var fromClient = make(chan []byte)
 var toClient = make(chan []byte)
+var doneLoading = make(chan int)
 var unregister = make(chan *websocket.Conn)
 
 // runWebsockets runs the communications between the server and the client
 // using the websocket.
-func runWebsockets() {
+func runWebsockets(t *Tweetlist) {
 	for {
 		select {
 		case c := <-register:
@@ -28,7 +28,12 @@ func runWebsockets() {
 		case message := <-fromClient:
 			m := string(message)
 			log.Println("message received:", m)
-			time.Sleep(2 * time.Second)
+			streamShutdown <- 1
+			go func() {
+				Stream(m, t)
+			}()
+
+		case _ = <-doneLoading:
 			for c := range clients {
 				msg := CreateDoneLoadingMessage()
 				sm, err := msg.serialize()
