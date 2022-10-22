@@ -4,6 +4,9 @@ import (
 	"github.com/goccy/go-json"
 )
 
+// message contains a message to be transmitted between the server and
+// the client. It defines the structure of the communications that are
+// sent across the websocket
 type message struct {
 	Code string `json:"code"`
 	Msg  string `json:"msg"`

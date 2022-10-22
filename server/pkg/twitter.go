@@ -14,6 +14,8 @@ import (
 	twitter "github.com/g8rswimmer/go-twitter/v2"
 )
 
+// TWITTER_BEARER_TOKEN is the package level variable used to store the
+// bearer token to authenticate to twitter
 var (
 	TWITTER_BEARER_TOKEN string
 )

@@ -9,6 +9,7 @@ import (
 
 var streamShutdown = make(chan int)
 
+// Main runs tweetviz, instantiating the initial stream and the webserver
 func Main() {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)

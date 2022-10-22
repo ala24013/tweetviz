@@ -1,5 +1,3 @@
-include ./.env
-
 # Cross platform support
 ifeq ($(OS), Windows_NT)
   MV=move

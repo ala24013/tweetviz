@@ -88,3 +88,17 @@ func TestFailProcessTweet(t *testing.T) {
 		t.Errorf("Did not process tweet correctly: %v", err)
 	}
 }
+
+func TestPrintRawTweet(t *testing.T) {
+	tw := generateTestTweet(true)
+	printRawTweet(tw)
+}
+
+func TestPrintFormattedTweet(t *testing.T) {
+	tweet := Tweet{
+		Username: "hi",
+		Tweet:    "hello",
+		Geo:      []float64{0, 1},
+	}
+	printFormattedTweet(tweet)
+}
