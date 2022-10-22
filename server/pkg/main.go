@@ -18,10 +18,6 @@ func Main() {
 		fmt.Println("Starting webserver...")
 		RunServer(tl)
 	}()
-	go func() {
-		fmt.Println("Starting twitter stream...")
-		Stream("Ian", tl)
-	}()
 	<-sigs
 	fmt.Println("Shutting down...")
 }

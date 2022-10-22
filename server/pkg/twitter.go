@@ -18,6 +18,7 @@ import (
 // bearer token to authenticate to twitter
 var (
 	TWITTER_BEARER_TOKEN string
+	DEFAULT_SEARCH       string = "Ian"
 )
 
 // Stream conducts the high level logic to manage the rules and stream tweets

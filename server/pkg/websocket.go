@@ -1,7 +1,6 @@
 package tweetviz
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/gofiber/websocket/v2"
@@ -24,13 +23,10 @@ func runWebsockets(t *Tweetlist) {
 	for {
 		select {
 		case c := <-register:
-			fmt.Println("register")
-
 			clients[c] = client{}
 			log.Println("connection registered")
 
 		case message := <-fromClient:
-			fmt.Println("fromClient")
 			m := string(message)
 			log.Println("message received:", m)
 			streamShutdown <- 1
@@ -39,7 +35,6 @@ func runWebsockets(t *Tweetlist) {
 			}()
 
 		case _ = <-doneLoading:
-			fmt.Println("doneloading")
 			for c := range clients {
 				msg := CreateDoneLoadingMessage()
 				sm, err := msg.serialize()
@@ -56,7 +51,6 @@ func runWebsockets(t *Tweetlist) {
 			}
 
 		case tweetlist := <-toClient:
-			fmt.Println("tweetlist")
 			for c := range clients {
 				msg := CreateTweetlistMessage(tweetlist)
 				sm, err := msg.serialize()
@@ -73,12 +67,10 @@ func runWebsockets(t *Tweetlist) {
 			}
 
 		case c := <-unregister:
-			fmt.Println("unregister")
 			delete(clients, c)
 			log.Println("connection unregistered")
 
 		case _ = <-shutdownWs:
-			fmt.Println("saw shutdown")
 			return
 		}
 	}

@@ -56,5 +56,8 @@ func SetupServer(t *Tweetlist) *fiber.App {
 // RunServer runs the webserver
 func RunServer(t *Tweetlist) {
 	server := SetupServer(t)
+	go func() {
+		Stream(DEFAULT_SEARCH, t)
+	}()
 	log.Fatal(server.Listen("localhost:3000"))
 }

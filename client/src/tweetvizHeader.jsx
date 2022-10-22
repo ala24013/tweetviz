@@ -1,4 +1,4 @@
-import { Avatar, Header, Container, Group, Title, useInputProps } from '@mantine/core';
+import { Avatar, Header, Container, Group, Title } from '@mantine/core';
 
 import SearchBar from './searchBar'
 
