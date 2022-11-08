@@ -45,3 +45,7 @@ jobs:
       env:
         TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
       run: make test
+      
+    - uses: shogo82148/actions-goveralls@v1
+      with:
+        path-to-profile: profile.cov

@@ -24,7 +24,7 @@ run: install
 
 .PHONY: test
 test:
-	go test -cover ./pkg/...
+	go test -v -coverprofile=profile.cov ./pkg/...
 
 .PHONY: fmt
 fmt:
