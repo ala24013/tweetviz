@@ -1,4 +1,4 @@
-[![Unit Tests][ci-img]][ci]
+[![Coverage Status](https://coveralls.io/repos/github/ala24013/tweetviz/badge.svg?branch=main)](https://coveralls.io/github/ala24013/tweetviz?branch=main)
 
 # :bird::eyeglasses: Tweetviz
 
@@ -23,6 +23,3 @@ make run
 and a webserver will instantiate, running a website on your local computer that will visualize the incoming tweets.
 
 Then, just open your favorite web browser and go to http://localhost:3000/ to open the server. Happy visualizing! :sunglasses:
-
-[ci-img]: https://github.com/ala24013/tweetviz/workflows/Unit%20Tests/badge.svg?branch=main
-[ci]: https://github.com/ala24013/tweetviz/actions?query=branch%3Amain
