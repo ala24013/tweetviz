@@ -46,9 +46,7 @@ jobs:
         TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
       run: make test
       
-    - name: Change working dir
-      run: cd server/
-      
     - uses: shogo82148/actions-goveralls@v1
       with:
-        path-to-profile: ./server/profile.cov
+        path-to-profile: profile.cov
+        working-directory: server/
