@@ -19,5 +19,12 @@ func Main() {
 		RunServer(tl)
 	}()
 	<-sigs
+	Shutdown()
+}
+
+// Shutdown shuts down the various running go routines
+func Shutdown() {
 	fmt.Println("Shutting down...")
+	<-shutdownWs
+	<-streamShutdown
 }
