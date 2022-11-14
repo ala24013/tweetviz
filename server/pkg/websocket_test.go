@@ -12,6 +12,10 @@ func TestRunWebsockets(t *testing.T) {
 	go runWebsockets(tl)
 	register <- c
 	unregister <- c
+	fromClient <- []byte{0}
+	doneLoading <- 1
+	s, _ := tl.serialize()
+	toClient <- s
 	// Skipping other channels because the effects would break our fake websocket
 	shutdownWs <- 1
 }
